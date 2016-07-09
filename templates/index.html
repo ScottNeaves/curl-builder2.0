@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Curl Builder</title>
+  <meta name="description" content="Builds curl commands">
+  <!-- stylesheets -->
+  <link rel="stylesheet" href="../static/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/css/styles.css">
+  <link rel="stylesheet" href="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.css">
+  <link rel="import" href="static/bower_components/juicy-ace-editor/juicy-ace-editor.html">
+</head>
+
+<body class="container">
+  <p id="result"></p>
+  <h1 class="well">Curl Builder</h1>
+  <div class="well">
+    <h3>Headers</h3>
+    <div data-bind="foreach: headers">
+      <div class="row header">
+        <form class="form-inline col-xs-12">
+          <div class="form-group col-xs-9">
+            <input class="form-control header-input" data-bind="autocomplete: {data: Object.keys(AnimalDict), maxItems: 6}, textInput: key" type="text" placeholder="key" />
+            <input class="form-control header-input" data-bind="autocomplete: {data: $parent.headers.getSuggestedValues($data), maxItems: 6}, textInput: value" type="text" placeholder="value" />
+          </div>
+          <button data-bind="click: $parent.headers.removeHeader" class="btn btn-default col-xs-3">Remove</button>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <button id="another" data-bind="click: headers.addHeader" class="form-control btn btn-sm" name="addAnother" value="addAnother">Add Another</button>
+      </div>
+    </div>
+
+    <h3>Query Parameters</h3>
+    <div data-bind="foreach: queryParams">
+      <div class="row header">
+        <form class="form-inline col-xs-12">
+          <div class="form-group col-xs-9">
+            <input class="form-control header-input" data-bind="textInput: key" type="text" placeholder="key" />
+            <input class="form-control header-input" data-bind="textInput: value" type="text" placeholder="value" />
+          </div>
+          <button data-bind="click: $parent.queryParams.removeQueryParam" class="btn btn-default col-xs-3">Remove</button>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <button id="another" data-bind="click: queryParams.addQueryParam" class="form-control btn btn-sm" name="addAnother" value="addAnother">Add Another</button>
+      </div>
+    </div>
+
+    <h3>Authentication</h3>
+    <div class="row header">
+      <form class="form-inline col-xs-12">
+        <div class="form-group col-xs-9">
+          <input class="form-control header-input" data-bind="textInput: username" type="text" placeholder="username" />
+          <input class="form-control header-input" data-bind="textInput: password" type="text" placeholder="password" />
+        </div>
+      </form>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <h3>Data</h3>
+        <div class="col-xs-3">
+          <select data-bind="options: editorModes, optionsText: 'name', optionsValue: 'value', value:editorMode" class="form-control"></select>
+        </div>
+        <div class="col-xs-3">
+          <button data-bind="click: formatText">Format Text</button>
+        </div>
+        <div id="editorParent" class="col-xs-12">
+          <div id="editor"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <h3>Method</h3>
+        <div class="col-xs-2">
+          <select data-bind="options: methodTypes, value: methodType" class="form-control" name="chooseMethod"></select>
+        </div>
+        <div class="col-xs-10">
+          <input data-bind="textInput: url" id="URL" class="form-control" type="text" name="URL" title="Enter a URL" placeholder="URL" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <h3>Curl Command</h3>
+        <div class="col-xs-12">
+          <button id="saveSnippet" data-bind="click: saveSnip" class="btn btn-sm">Save</button>
+          <button id="copybutton" class="btn btn-sm" data-target="#hi">Copy to Clipboard</button>
+          <textarea id="hi" data-bind="value: curlCommand" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- scripts -->
+  <script src="../static/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="../static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../static/bower_components/clipboard/dist/clipboard.min.js"></script>
+  <script src="../static/bower_components/knockout/dist/knockout.js"></script>
+  <script type="text/javascript" src="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.js"></script>
+  <script type="text/javascript" src="../static/bower_components/vkbeautify/vkbeautify.js"></script>
+
+  <script src="../static/js/script.js"></script>
+  <script>
+    var clipboard = new Clipboard("#copybutton");
+  </script>
+</body>
+
+</html>

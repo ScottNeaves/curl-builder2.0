@@ -1,0 +1,55 @@
+body{
+  background-color: #588C7E
+}
+
+.well{
+  background-color: #F2AE72
+}
+
+h1, h2, h3{
+  color: black;
+}
+
+.btn{
+  background-color: #D96459
+}
+
+.btn:hover{
+  background-color: #F2E394
+}
+
+#copybutton{
+  float:right;
+}
+
+#saveSnippet{
+  float:right;
+}
+
+#another{
+  width: 15%;
+  float:right;
+  margin:10px;
+}
+
+#select{
+  height:50px;
+  width:100px;
+}
+
+.header{
+  margin-top: 10px;
+}
+
+/*In inline forms, you must explicitly set the width on form-controls. See: http://stackoverflow.com/questions/22774780/bootstrap-full-width-text-input-within-inline-form*/
+.header .header-input{
+  width:49%;
+}
+
+#editor {
+    height:400px;
+  }
+
+#curlcommandarea{
+  height:200px;
+}
