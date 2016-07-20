@@ -2,9 +2,10 @@ var editor = ace.edit("editor")
 editor.setTheme("ace/theme/chrome")
 editor.getSession().setMode("ace/mode/javascript");
 editor.setOption("showPrintMargin", false)
+editor.$blockScrolling = Infinity
 var editorContent = ""
 
-var AnimalDict = {
+var headerSuggestions = {
   "Content-Type": ['application/json', 'application/xml', 'text/html', 'text/plain', 'text/xml'],
   "Authorization": ['Bearer'],
   "Accept": ['application/json', 'application/xml', 'text/html', 'text/plain', 'text/xml'],
@@ -26,42 +27,38 @@ var editorModes = [{
 
 function ViewModel() {
   var self = this;
-  self.dataPayload = ko.observable("")
-  self.methodType = ko.observable("")
-  self.url = ko.observable("")
-  self.queryParams = ko.observableArray([{
-    key: ko.observable(""),
-    value: ko.observable("")
-  }, ]);
-  self.editorMode = ko.observable("json")
-  self.editorMode.subscribe(function() {
-    editor.getSession().setMode("ace/mode/" + self.editorMode())
-  });
-  self.username = ko.observable("")
-  self.password = ko.observable("")
-  self.editorContentObservable = ko.observable("")
-  editor.getSession().on('change', function(e) {
-    editorContent = editor.getValue()
-    self.editorContentObservable(editorContent)
-    editorContent = editorContent.replace(/[\n\t ]/g, '');
-    self.editorContentObservable(editorContent)
-    if (self.editorContentObservable() != '') {
-      self.editorContentObservable('--data ' + self.editorContentObservable())
-    }
-  });
-  self.formatText = function() {
-    if (self.editorMode() == 'json') {
-      editor.setValue(JSON.stringify(JSON.parse(editorContent), null, '\t'));
-      //editor.setValue(vkbeautify.json(editorContent));
-    }
-    if (self.editorMode() == 'xml') {
-      editor.setValue(vkbeautify.xml(editorContent));
-    }
-  }
+
   self.headers = ko.observableArray([{
     key: ko.observable(""),
     value: ko.observable("")
   }, ]);
+
+  self.queryParams = ko.observableArray([{
+    key: ko.observable(""),
+    value: ko.observable("")
+  }, ]);
+
+  self.authentication = {
+    "auth_necessary": ko.observable(true),
+    "set_auth": function(bool) {
+        return function(){
+          self.authentication.auth_necessary(bool);
+        }
+    },
+    "username": ko.observable(""),
+    "password": ko.observable("")
+  }
+
+  self.editorMode = ko.observable("json")
+  self.editorMode.subscribe(function() {
+    editor.getSession().setMode("ace/mode/" + self.editorMode())
+  });
+  self.editorContent = ko.observable("")
+
+  self.methodType = ko.observable("")
+  self.url = ko.observable("")
+
+  self.dataPayload = ko.observable("")
 
   self.saveSnip = function() {
     var qpms = []
@@ -104,43 +101,49 @@ function ViewModel() {
   }
 
   self.curlCommand = ko.computed(function() {
-    this.queryParameters = ''
-    if (self.queryParams()[0].key() != '') {
-      this.queryParameters = "?"
+    headers = ""
+    for (var i = 0; i < self.headers().length; i++) {
+      if (self.headers()[i].key() != '' && self.headers()[i].value() != '') {
+        headers += " --header \"" + self.headers()[i].key() + ": " + self.headers()[i].value() + "\"";
+      }
+    }
+
+    var data = '';
+    if(self.editorContent() != ''){
+      data = '--data \'' + self.editorContent() + '\'';
+    }
+
+    var auth = '';
+    if (self.authentication.username() != '') {
+      auth = ' --user \'' + self.authentication.username() + ":" + self.authentication.password() + "\'";
+    }
+
+    queryparameters = '';
+    if (self.queryParams().length>0 && self.queryParams()[0].key() != '') {
+      queryparameters = "?";
     }
     for (var i = 0; i < self.queryParams().length; i++) {
       if (self.queryParams()[i].key() != '' && self.queryParams()[i].value() != '') {
-        this.queryParameters = this.queryParameters + self.queryParams()[i].key() + "=" + self.queryParams()[i].value()
+        queryparameters += self.queryParams()[i].key() + "=" + self.queryParams()[i].value();
         if (i < self.queryParams().length - 1) {
-          this.queryParameters = this.queryParameters + "&"
-        } else {
-          this.queryParameters = this.queryParameters
+          queryparameters += "&";
         }
       }
     }
-    this.headers = ""
-    for (var i = 0; i < self.headers().length; i++) {
-      if (self.headers()[i].key() != '' && self.headers()[i].value() != '') {
-        this.headers = this.headers + " --header \"" + self.headers()[i].key() + ": " + self.headers()[i].value() + "\""
-      }
-    }
 
-    var authString = '';
-    if (self.username() != '') {
-      authString = ' --user \'' + self.username() + ":" + self.password() + "\'"
-    }
-
-    var urlString = ''
+    var url = ''
     if (self.url() != '') {
-      urlString = "\"" + self.url() + "\""
+      url = "\"" + self.url() + queryparameters + "\"";
     }
 
-    return "curl --verbose " + this.headers + self.editorContentObservable() + authString + " --request \"" + self.methodType() + "\" " + self.url() + this.queryParameters
+    var method = " --request \"" + self.methodType() + "\" ";
+
+    return "curl --verbose " + headers + data + auth + method + url
   })
 
   self.headers.getSuggestedValues = function(pair) {
     return ko.computed(function() {
-      return AnimalDict[pair.key()];
+      return headerSuggestions[pair.key()];
     });
   };
 
@@ -166,9 +169,21 @@ function ViewModel() {
     self.queryParams.remove(this)
   }
 
+  editor.getSession().on('change', function(e) {
+    self.editorContent(editor.getValue().replace(/[\n\t ]/g, ''))
+  });
+
+  self.formatText = function() {
+    if (self.editorMode() == 'json') {
+      editor.setValue(JSON.stringify(JSON.parse(editor.getValue()), null, '\t'));
+    }
+    if (self.editorMode() == 'xml') {
+      editor.setValue(vkbeautify.xml(editor.getValue()));
+    }
+  }
+
   function checkForData() {
     $(document).ready(function() {
-      console.log("In function")
       url = document.URL
       var code = url.substr(url.length - 6);
       isACode = true;
@@ -181,7 +196,6 @@ function ViewModel() {
       }
       //Get JSON related to the code
       if (isACode == true) {
-        console.log('I got here')
         $.post('/retrieveSnippet/' + code, function(data) {
           var curl = JSON.parse(data)
           console.log(curl)
@@ -190,18 +204,15 @@ function ViewModel() {
           self.methodType(curl.methodType)
           self.username(curl.username)
           self.password(curl.password)
-          //editorContent = curl.dataPayload
           editor.setValue(curl.dataPayload)
-          //console.log('editorContent is now: ' + editorContent)
-          //console.log(curl.headers.length)
+
           self.headers().pop()
           for (var i = 0; i < curl.headers.length; i++) {
             self.headers.push({
               key: ko.observable(curl.headers[i].key),
               value: ko.observable(curl.headers[i].value)
             })
-            //console.log('hdrs key is ' + curl.headers[i].key)
-            //console.log('hdrs value is ' + curl.headers[i].value)
+
           }
           self.queryParams().pop()
           for (var i = 0; i < curl.queryParameters.length; i++) {
@@ -209,10 +220,7 @@ function ViewModel() {
               key: ko.observable(curl.queryParameters[i].key),
               value: ko.observable(curl.queryParameters[i].value)
             })
-            //console.log('qpms key is ' + curl.queryParameters[i].key)
-            //console.log('qpms value is ' + curl.queryParameters[i].value)
           }
-          //Headers, query parameters, and dataPayload don't work right now
         });
       }
     });

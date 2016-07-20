@@ -1,4 +1,38 @@
-body{
+#editor {
+    min-height:200px;
+}
+
+.button-right{
+    float:right;
+    margin-bottom: 3px;
+}
+
+.page-title-container{
+    overflow: auto;
+    text-align: center
+}
+
+.row{
+  margin-top:5px;
+}
+
+@media(max-width:767px){}
+@media(min-width:768px){
+  .header .header-input{
+    width:49%;
+  }
+
+  .query-param .query-param-input{
+    width:49%;
+  }
+
+  .auth .auth-input{
+    width:49%;
+  }
+}
+@media(min-width:992px){}
+@media(min-width:1200px){}
+/*body{
   background-color: #588C7E
 }
 
@@ -39,10 +73,10 @@ h1, h2, h3{
 
 .header{
   margin-top: 10px;
-}
+}*/
 
 /*In inline forms, you must explicitly set the width on form-controls. See: http://stackoverflow.com/questions/22774780/bootstrap-full-width-text-input-within-inline-form*/
-.header .header-input{
+/*.header .header-input{
   width:49%;
 }
 
@@ -52,4 +86,4 @@ h1, h2, h3{
 
 #curlcommandarea{
   height:200px;
-}
+}*/
