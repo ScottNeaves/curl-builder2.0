@@ -3,7 +3,6 @@ editor.setTheme("ace/theme/chrome")
 editor.getSession().setMode("ace/mode/javascript");
 editor.setOption("showPrintMargin", false)
 editor.$blockScrolling = Infinity
-var editorContent = ""
 
 var headerSuggestions = {
   "Content-Type": ['application/json', 'application/xml', 'text/html', 'text/plain', 'text/xml'],
@@ -15,19 +14,19 @@ var headerSuggestions = {
 var methodTypes = ['GET', 'PUT', 'POST', 'DELETE']
 
 var editorModes = [{
-  value: 'text',
-  name: 'Plain Text'
-}, {
-  value: 'json',
-  name: 'JSON'
-}, {
-  value: 'xml',
-  name: 'XML'
-}]
+    value: 'text',
+    name: 'Plain Text'
+  }, {
+    value: 'json',
+    name: 'JSON'
+  }, {
+    value: 'xml',
+    name: 'XML'
+  }]
 
 function ViewModel() {
   var self = this;
-
+  self.uid = ko.observable(null);
   self.headers = ko.observableArray([{
     key: ko.observable(""),
     value: ko.observable("")
@@ -60,39 +59,19 @@ function ViewModel() {
 
   self.dataPayload = ko.observable("")
 
-  self.saveSnip = function() {
-    var qpms = []
-    for (var i = 0; i < self.queryParams().length; i++) {
-      qpms.push({
-        key: self.queryParams()[i].key(),
-        value: self.queryParams()[i].value()
-      })
-    }
-    var hdrs = []
-    for (var i = 0; i < self.headers().length; i++) {
-      hdrs.push({
-        key: self.headers()[i].key(),
-        value: self.headers()[i].value()
-      })
-    }
-    var dataObject = {
-      headers: hdrs,
-      queryParameters: qpms,
-      username: self.username(),
-      password: self.password(),
-      dataPayload: editorContent,
-      editorMode: self.editorMode(),
-      methodType: self.methodType(),
-      url: self.url()
-    }
+
+  self.saveCurl = function() {
     $.ajax({
       type: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify(dataObject),
+      data: JSON.stringify(self.serializeCurlAsJson()),
       dataType: 'json',
-      url: '/saveSnippet',
+      url: '/save_curl',
       success: function(response) {
-        window.history.pushState("", "", "/" + response.code)
+        if (!self.url_has_uid()){
+          window.history.pushState("", "", "/" + response.uid);
+        }
+        self.uid(response.uid);
       },
       error: function() {
         console.log("error occurred")
@@ -182,52 +161,83 @@ function ViewModel() {
     }
   }
 
+  self.serializeCurlAsJson = function(){
+    var hdrs = []
+    for (var i = 0; i < self.headers().length; i++) {
+      hdrs.push({
+        key: self.headers()[i].key(),
+        value: self.headers()[i].value()
+      })
+    }
+    var qpms = []
+    for (var i = 0; i < self.queryParams().length; i++) {
+      qpms.push({
+        key: self.queryParams()[i].key(),
+        value: self.queryParams()[i].value()
+      })
+    }
+    return {
+      uid: self.uid(),
+      headers: hdrs,
+      queryParameters: qpms,
+      username: self.authentication.username(),
+      password: self.authentication.password(),
+      dataPayload: self.editorContent(),
+      editorMode: self.editorMode(),
+      methodType: self.methodType(),
+      url: self.url()
+    }
+  }
+
+  self.deserializeJson = function(curl){
+    self.url(curl.url)
+    self.editorMode(curl.editorMode)
+    self.methodType(curl.methodType)
+    self.authentication.username(curl.username)
+    self.authentication.password(curl.password)
+    editor.setValue(curl.dataPayload)
+
+    self.headers().pop()
+    for (var i = 0; i < curl.headers.length; i++) {
+      self.headers.push({
+        key: ko.observable(curl.headers[i].key),
+        value: ko.observable(curl.headers[i].value)
+      })
+    }
+
+    self.queryParams().pop()
+    for (var i = 0; i < curl.queryParameters.length; i++) {
+      self.queryParams.push({
+        key: ko.observable(curl.queryParameters[i].key),
+        value: ko.observable(curl.queryParameters[i].value)
+      })
+    }
+  }
+
+  self.get_uid = function(){
+    url = document.URL
+    uid = url.substr(url.length - 16)
+    return /[a-zA-Z0-9]{16}$/.test(uid) ? uid : null;
+  }
+
+  self.url_has_uid = ko.computed(function(){
+    return self.uid()!=null;
+  })
+
   function checkForData() {
     $(document).ready(function() {
-      url = document.URL
-      var code = url.substr(url.length - 6);
-      isACode = true;
-      for (var i = 0; i < code.length; i++) {
-        if (!$.isNumeric(code[i])) {
-          //there is no code in the url.
-          isACode = false;
-          break;
-        }
-      }
-      //Get JSON related to the code
-      if (isACode == true) {
-        $.post('/retrieveSnippet/' + code, function(data) {
-          var curl = JSON.parse(data)
-          console.log(curl)
-          self.url(curl.url)
-          self.editorMode(curl.editorMode)
-          self.methodType(curl.methodType)
-          self.username(curl.username)
-          self.password(curl.password)
-          editor.setValue(curl.dataPayload)
-
-          self.headers().pop()
-          for (var i = 0; i < curl.headers.length; i++) {
-            self.headers.push({
-              key: ko.observable(curl.headers[i].key),
-              value: ko.observable(curl.headers[i].value)
-            })
-
-          }
-          self.queryParams().pop()
-          for (var i = 0; i < curl.queryParameters.length; i++) {
-            self.queryParams.push({
-              key: ko.observable(curl.queryParameters[i].key),
-              value: ko.observable(curl.queryParameters[i].value)
-            })
-          }
+      if (self.get_uid()) {
+        self.uid(self.get_uid());
+        $.post('/retrieve_curl/' + self.get_uid(), function(data) {
+          var curl = JSON.parse(data);
+          self.deserializeJson(curl);
         });
       }
     });
   }
-
   checkForData();
 
 };
+
 
 ko.applyBindings(new ViewModel());
