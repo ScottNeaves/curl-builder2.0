@@ -82,7 +82,8 @@ function ViewModel() {
                 if (!self.url_has_uid()) {
                     window.history.pushState("", "", "/" + response.uid);
                 }
-                self.uid(response.uid);
+                self.uid()['uid'](response.uid);
+                self.uid()['valid'](true);
             },
             error: function() {
                 console.log("error occurred")
@@ -188,7 +189,7 @@ function ViewModel() {
             })
         }
         return {
-            uid: self.uid(),
+            uid: self.uid()['uid'](),
             headers: hdrs,
             queryParameters: qpms,
             username: self.authentication().username(),

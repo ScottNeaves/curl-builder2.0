@@ -27,8 +27,7 @@ def root(uid=None):
 def save(uid=None):
     data = request.get_json()
     if data['uid'] == None:
-        data['uid'] = ''.join(random.choice(
-            string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
+        data['uid'] = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
         mongo.db.savedCurls.insert_one(data)
     else:
         mongo.db.savedCurls.replace_one({'uid': uid}, data)

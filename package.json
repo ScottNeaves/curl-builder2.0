@@ -1,76 +1,24 @@
 {
-  "name": "knockout.autocomplete",
-  "version": "1.5.3",
-  "author": {
-    "name": "Sune Sloth Simonsen",
-    "email": "sune@we-knowhow.dk"
+  "name": "curl-builder2.0",
+  "version": "1.0.0",
+  "description": "Builds curl commands",
+  "main": "index.js",
+  "dependencies": {
+    "bower": "^1.7.9",
+    "knockout.autocomplete": "^1.7.1"
   },
+  "devDependencies": {},
   "scripts": {
-    "test": "mocha-phantomjs test/index.html",
-    "postinstall": "bower install"
-  },
-  "devDependencies": {
-    "mocha": "2.3.2",
-    "mocha-phantomjs": "3.6.0",
-    "phantomjs": "1.9.7-15",
-    "serve": "^1.4.0",
-    "unexpected": "10.8.0",
-    "unexpected-dom": "3.0.2"
-  },
-  "bugs": {
-    "url": "https://github.com/One-com/knockout.autocomplete/issues"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/One-com/knockout.autocomplete.git"
+    "url": "git+https://github.com/ScottNeaves/curl-builder2.0.git"
   },
-  "license": "Apache-2.0",
-  "gitHead": "05ec9f81f59b45a918d03cb1e46ff10925233d78",
-  "description": "An auto completion binding for Knockout.",
-  "homepage": "https://github.com/One-com/knockout.autocomplete#readme",
-  "_id": "knockout.autocomplete@1.5.3",
-  "_shasum": "cc9b94155569a2d9d8be5339c7cc6f5b3bd27a06",
-  "_from": "knockout.autocomplete@latest",
-  "_npmVersion": "2.14.11",
-  "_nodeVersion": "0.10.40",
-  "_npmUser": {
-    "name": "hanstdam",
-    "email": "hans.dam@gmail.com"
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ScottNeaves/curl-builder2.0/issues"
   },
-  "dist": {
-    "shasum": "cc9b94155569a2d9d8be5339c7cc6f5b3bd27a06",
-    "tarball": "http://registry.npmjs.org/knockout.autocomplete/-/knockout.autocomplete-1.5.3.tgz"
-  },
-  "maintainers": [
-    {
-      "name": "autochton",
-      "email": "gert.sonderby@gmail.com"
-    },
-    {
-      "name": "birkestroem",
-      "email": "jesper@birkestroem.dk"
-    },
-    {
-      "name": "hanstdam",
-      "email": "hans.dam@gmail.com"
-    },
-    {
-      "name": "papandreou",
-      "email": "andreas@one.com"
-    },
-    {
-      "name": "sunesimonsen",
-      "email": "sune@we-knowhow.dk"
-    }
-  ],
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/knockout.autocomplete-1.5.3.tgz_1458776486132_0.7847455255687237"
-  },
-  "directories": {},
-  "_resolved": "https://registry.npmjs.org/knockout.autocomplete/-/knockout.autocomplete-1.5.3.tgz",
-  "readme": "ERROR: No README data found!",
-  "dependencies": {
-    "bower": "^1.7.9"
-  }
+  "homepage": "https://github.com/ScottNeaves/curl-builder2.0#readme"
 }
