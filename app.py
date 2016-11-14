@@ -13,6 +13,7 @@ from flask import redirect
 
 
 app = Flask(__name__)
+app.config['MONGO_URI'] = os.environ['MONGODB_URI'] 
 mongo = PyMongo(app)
 
 
