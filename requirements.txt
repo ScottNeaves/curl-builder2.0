@@ -5,5 +5,4 @@ Jinja2==2.8
 MarkupSafe==0.23
 SQLAlchemy==1.0.12
 Werkzeug==0.11.4
-pymongo==3.2.2
 Flask-PyMongo==0.4.1
