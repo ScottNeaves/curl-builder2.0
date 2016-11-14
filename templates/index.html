@@ -2,151 +2,145 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Curl Builder</title>
-  <meta name="description" content="Builds curl commands">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- stylesheets -->
-  <link rel="stylesheet" href="../static/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../static/css/styles.css">
-  <link rel="stylesheet" href="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.css">
-  <link rel="import" href="static/bower_components/juicy-ace-editor/juicy-ace-editor.html">
-  <script src="https://use.fontawesome.com/bc12214a39.js"></script>
+    <meta charset="utf-8">
+    <title>Curl Builder</title>
+    <meta name="description" content="Builds curl commands">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="../static/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.css">
+    <link rel="import" href="static/bower_components/juicy-ace-editor/juicy-ace-editor.html">
+    <script src="https://use.fontawesome.com/bc12214a39.js"></script>
 </head>
 
-<body class="container" data-bind="visible: true" style="display:none"> <!-- Prevents flickering: http://stackoverflow.com/questions/14583018/knockout-flickering-issue -->
-  <div class="well">
-    <div class="page-title-container">
-      <h1 class="page-title">Curl Builder 💪</h1>
-    </div>
-  </div>
-  <div class="well">
-    <h3>Headers</h3>
-    <div data-bind="foreach: headers">
-      <div class="row header">
-        <form class="form-inline col-xs-12">
-          <div class="form-group col-xs-9">
-            <input class="form-control header-input" data-bind="autocomplete: {data: Object.keys(headerSuggestions), maxItems: 6}, textInput: key" type="text" placeholder="key" />
-            <input class="form-control header-input" data-bind="autocomplete: {data: $parent.headers.getSuggestedValues($data), maxItems: 6}, textInput: value" type="text" placeholder="value" />
-          </div>
-          <button data-bind="click: $parent.headers.removeHeader" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-xs-12">
-        <div class="col-sm-9"></div>
-        <button data-bind="click: headers.addHeader" class="btn btn-default col-xs-12 col-sm-3" name="addAnother" value="addAnother"><i class="fa fa-plus"></i></button>
-      </div>
-    </div>
-
-    <h3>Query Parameters</h3>
-    <div data-bind="foreach: queryParams">
-      <div class="row query-param">
-        <form class="form-inline col-xs-12">
-          <div class="form-group col-xs-9">
-            <input class="form-control query-param-input" data-bind="textInput: key" type="text" placeholder="key" />
-            <input class="form-control query-param-input" data-bind="textInput: value" type="text" placeholder="value" />
-          </div>
-          <button data-bind="click: $parent.queryParams.removeQueryParam" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-xs-12">
-        <div class="col-sm-9"></div>
-        <button data-bind="click: queryParams.addQueryParam" class="btn btn-default col-xs-12 col-sm-3" name="addAnother" value="addAnother"><i class="fa fa-plus"></i></button>
-      </div>
-    </div>
-
-    <h3>Authentication</h3>
-
-    <div class="row auth">
-      <form class="form-inline col-xs-12">
-        <div class="form-group col-xs-9" data-bind="visible: authentication.auth_necessary()==true">
-          <input class="form-control auth-input" data-bind="textInput: authentication.username" type="text" placeholder="username" />
-          <input class="form-control auth-input" data-bind="textInput: authentication.password" type="text" placeholder="password" />
+<body>
+    <div class="container" data-bind="visible: true" style="display: none"> <!-- Prevents flickering: http://stackoverflow.com/questions/14583018/knockout-flickering-issue -->
+        <div class="well">
+            <div class="page-title-container">
+                <h1 class="page-title">Curl Builder 💪</h1>
+            </div>
         </div>
-        <div class="form-group col-xs-9" data-bind="visible: authentication.auth_necessary()==false">
+        <div class="well">
+            <h3>Headers</h3>
+            <div data-bind="foreach: headers">
+                <div class="row header">
+                    <form class="form-inline col-xs-12">
+                        <div class="form-group col-xs-9">
+                            <input class="form-control header-input" data-bind="autocomplete: {data: Object.keys(headerSuggestions), maxItems: 6}, textInput: key" type="text" placeholder="key" />
+                            <input class="form-control header-input" data-bind="autocomplete: {data: $parent.headers.getSuggestedValues($data), maxItems: 6}, textInput: value" type="text" placeholder="value" />
+                        </div>
+                        <button data-bind="click: $parent.headers.removeHeader" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <div class="col-sm-9"></div>
+                    <button data-bind="click: headers.addHeader" class="btn btn-default col-xs-12 col-sm-3" name="addAnother" value="addAnother"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+
+            <h3>Query Parameters</h3>
+            <div data-bind="foreach: queryParams">
+                <div class="row query-param">
+                    <form class="form-inline col-xs-12">
+                        <div class="form-group col-xs-9">
+                            <input class="form-control query-param-input" data-bind="textInput: key" type="text" placeholder="key" />
+                            <input class="form-control query-param-input" data-bind="textInput: value" type="text" placeholder="value" />
+                        </div>
+                        <button data-bind="click: $parent.queryParams.removeQueryParam" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <div class="col-sm-9"></div>
+                    <button data-bind="click: queryParams.addQueryParam" class="btn btn-default col-xs-12 col-sm-3" name="addAnother" value="addAnother"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+
+            <h3>Authentication</h3>
+
+            <div class="row auth">
+                <form class="form-inline col-xs-12">
+                    <div class="form-group col-xs-9" data-bind="visible: authentication().auth_necessary()==true">
+                        <input class="form-control auth-input" data-bind="textInput: authentication().username" type="text" placeholder="username" />
+                        <input class="form-control auth-input" data-bind="textInput: authentication().password" type="text" placeholder="password" />
+                    </div>
+                    <div class="form-group col-xs-9" data-bind="visible: authentication().auth_necessary()==false">
+                    </div>
+                    <button data-bind="visible: authentication().auth_necessary()==false, click: authentication().set_auth(true)" class="btn btn-default col-xs-3"><i class="fa fa-plus"></i></button>
+                    <button data-bind="visible: authentication().auth_necessary()==true, click: authentication().set_auth(false)" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
+                </form>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <h3>Data</h3>
+                    <div class="col-xs-6 col-sm-3">
+                        <select data-bind="options: editorModes, optionsText: 'name', optionsValue: 'value', value:editorMode" class="form-control"></select>
+                    </div>
+                    <div class="col-sm-6"></div>
+                    <div class="col-xs-6 col-sm-3">
+                        <button class="btn btn-default button-right" data-bind="visible: editorMode()!='text', click: formatText"><i class="fa fa-bolt"></i> Format Text</button>
+                    </div>
+                    <div id="editorParent" class="col-xs-12">
+                        <div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <h3>Method</h3>
+                    <div class="col-xs-4 col-sm-2">
+                        <select data-bind="options: methodTypes, value: methodType" class="form-control" name="chooseMethod"></select>
+                    </div>
+                    <div class="col-xs-8 col-sm-10">
+                        <input data-bind="textInput: url" id="URL" class="form-control" onClick="autoSelectURLContents(this)" type="text" name="URL" title="Enter a URL" placeholder="www.example.com" />
+                    </div>
+                </div>
+            </div>
+            <div class="curl_cmd_container_placeholder"></div>
         </div>
-        <button data-bind="visible: authentication.auth_necessary()==false, click: authentication.set_auth(true)" class="btn btn-default col-xs-3"><i class="fa fa-plus"></i></button>
-        <button data-bind="visible: authentication.auth_necessary()==true, click: authentication.set_auth(false)" class="btn btn-default col-xs-3"><i class="fa fa-trash"></i></button>
-      </form>
     </div>
 
-    <!-- <div class="row auth">
-      <form class="form-inline col-xs-12">
-        <div class="form-group col-xs-9">
-          <input class="form-control auth-input" data-bind="textInput: authentication.username" type="text" placeholder="username" />
-          <input class="form-control auth-input" data-bind="textInput: authentication.password" type="text" placeholder="password" />
-        </div>
-      </form>
-    </div> -->
+    <div class="container curl_cmd_container" data-bind="visible: true" style="display: none"> <!-- Prevents flickering: http://stackoverflow.com/questions/14583018/knockout-flickering-issue -->
+        <div class="well curl_cmd_well">
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <div class="col-xs-12">
+                        <div class="input-group">
+                            <textarea id="curl_cmd" data-bind="value: curlCommand" class="form-control" rows="3"></textarea>
+                            <span class="input-group-addon"><i class="fa fa-clipboard copy-button"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row">
-      <div class="form-group col-xs-12">
-        <h3>Data</h3>
-        <div class="col-xs-6 col-sm-3">
-          <select data-bind="options: editorModes, optionsText: 'name', optionsValue: 'value', value:editorMode" class="form-control"></select>
+            <div class="row" data-bind="visible: url_has_uid()==true">
+                <a target="_blank" href="/" class="btn btn-default col-xs-6">New 💪</a>
+                <a class="btn btn-default col-xs-6" data-bind="click: saveCurl"><i class="fa fa-floppy-o"></i> Save</a>
+            </div>
+
+            <div class="row" data-bind="visible: url_has_uid()==false">
+                <div class="col-xs-3"></div>
+                <a class="btn btn-default col-xs-6" data-bind="click: saveCurl"><i class="fa fa-floppy-o"></i> Save</a>
+                <div class="col-xs-3"></div>
+            </div>
         </div>
-        <div class="col-sm-6"></div>
-        <div class="col-xs-6 col-sm-3">
-          <button class="btn btn-default button-right" data-bind="visible: editorMode()!='text', click: formatText"><i class="fa fa-bolt"></i> Format Text</button>
-        </div>
-        <div id="editorParent" class="col-xs-12">
-          <div id="editor"></div>
-        </div>
-      </div>
     </div>
 
-    <div class="row">
-      <div class="form-group col-xs-12">
-        <h3>Method</h3>
-        <div class="col-xs-4 col-sm-2">
-          <select data-bind="options: methodTypes, value: methodType" class="form-control" name="chooseMethod"></select>
-        </div>
-        <div class="col-xs-8 col-sm-10">
-          <input data-bind="textInput: url" id="URL" class="form-control" type="text" name="URL" title="Enter a URL" placeholder="URL" />
-        </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="form-group col-xs-12">
-        <h2>Curl Command</h3>
-        <div class="col-xs-12">
-          <!-- <button id="saveSnippet" data-bind="click: saveSnip" class="btn btn-sm">Save</button> -->
-          <button class="btn btn-default button-right" data-target="curl_cmd"><i class="fa fa-clipboard"></i>  Copy to Clipboard</button>
-          <textarea id="curl_cmd" data-bind="value: curlCommand" class="form-control" rows="3"></textarea>
-        </div>
-      </div>
-    </div>
+    <!-- scripts -->
+    <script src="../static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../static/bower_components/knockout/dist/knockout.js"></script>
+    <script type="text/javascript" src="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.js"></script>
+    <script type="text/javascript" src="../static/bower_components/vkbeautify/vkbeautify.js"></script>
+    <script src="../static/js/script.js"></script>
 
-    <div class="row" data-bind="visible: url_has_uid()==true">
-        <a target="_blank" href="/" class="btn btn-default col-xs-6">New 💪</a>
-        <a class="btn btn-default col-xs-6" data-bind="click: saveCurl"><i class="fa fa-floppy-o"></i> Update</a>
-    </div>
-
-    <div class="row" data-bind="visible: url_has_uid()==false">
-        <div class="col-xs-3"></div>
-        <a class="btn btn-default col-xs-6" data-bind="click: saveCurl"><i class="fa fa-floppy-o"></i> Save</a>
-        <div class="col-xs-3"></div>
-    </div>
-
-  </div>
-
-  <!-- scripts -->
-  <script src="../static/bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="../static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <!-- <script src="../static/bower_components/clipboard/dist/clipboard.min.js"></script> -->
-  <script src="../static/bower_components/knockout/dist/knockout.js"></script>
-  <script type="text/javascript" src="../static/node_modules/knockout.autocomplete/lib/knockout.autocomplete.js"></script>
-  <script type="text/javascript" src="../static/bower_components/vkbeautify/vkbeautify.js"></script>
-
-  <script src="../static/js/script.js"></script>
-  <!-- <script>
-    var clipboard = new Clipboard("#copybutton");
-  </script> -->
 </body>
 
 </html>

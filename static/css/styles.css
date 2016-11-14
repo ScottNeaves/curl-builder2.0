@@ -16,6 +16,27 @@
   margin-top:5px;
 }
 
+.curl_cmd_container {
+  left:auto;
+  transform:0;
+  position:fixed;
+  bottom:0px;
+  z-index: 10;
+}
+
+.curl_cmd_container_placeholder {
+  height: 170px;
+}
+
+.curl_cmd_well {
+  background: #d9d9d9;
+  border: 1px solid;
+}
+
+#curl_cmd{
+    resize: none;
+}
+
 @media(max-width:767px){}
 @media(min-width:768px){
   .header .header-input{
@@ -29,61 +50,11 @@
   .auth .auth-input{
     width:49%;
   }
+
+  .curl_cmd_container {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 @media(min-width:992px){}
 @media(min-width:1200px){}
-/*body{
-  background-color: #588C7E
-}
-
-.well{
-  background-color: #F2AE72
-}
-
-h1, h2, h3{
-  color: black;
-}
-
-.btn{
-  background-color: #D96459
-}
-
-.btn:hover{
-  background-color: #F2E394
-}
-
-#copybutton{
-  float:right;
-}
-
-#saveSnippet{
-  float:right;
-}
-
-#another{
-  width: 15%;
-  float:right;
-  margin:10px;
-}
-
-#select{
-  height:50px;
-  width:100px;
-}
-
-.header{
-  margin-top: 10px;
-}*/
-
-/*In inline forms, you must explicitly set the width on form-controls. See: http://stackoverflow.com/questions/22774780/bootstrap-full-width-text-input-within-inline-form*/
-/*.header .header-input{
-  width:49%;
-}
-
-#editor {
-    height:400px;
-  }
-
-#curlcommandarea{
-  height:200px;
-}*/
