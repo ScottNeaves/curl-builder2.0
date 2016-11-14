@@ -4,7 +4,6 @@
   "description": "Builds curl commands",
   "main": "index.js",
   "dependencies": {
-    "bower": "^1.7.9",
     "knockout.autocomplete": "^1.7.1"
   },
   "devDependencies": {},
