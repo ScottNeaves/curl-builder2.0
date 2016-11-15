@@ -13,7 +13,7 @@ from flask import redirect
 
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = os.environ['MONGODB_URI'] 
+app.config['MONGO_URI'] = 'mongodb://heroku_9gd1s4mj:nslplv4spuj922q5ufb33i1qsk@ds153667.mlab.com:53667/heroku_9gd1s4mj'#os.environ['MONGODB_URI']
 mongo = PyMongo(app)
 
 
@@ -25,13 +25,13 @@ def root(uid=None):
 
 
 @app.route('/save_curl', methods=['POST'])
-def save(uid=None):
+def save():
     data = request.get_json()
     if data['uid'] == None:
         data['uid'] = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(16))
         mongo.db.savedCurls.insert_one(data)
     else:
-        mongo.db.savedCurls.replace_one({'uid': uid}, data)
+        mongo.db.savedCurls.replace_one({'uid': data['uid']}, data)
     return json.dumps({'uid': data.get('uid')})
 
 
