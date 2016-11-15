@@ -44,4 +44,5 @@ def retrieve(uid):
         else:
             return json.dumps({'error': 'The unique ID in the URL doesn\'t match any saved cURL commands.'})
 
-app.run()
+if __name__ == '__main__':
+    app.run()
