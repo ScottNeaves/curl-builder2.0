@@ -31,6 +31,13 @@
 .curl_cmd_well {
   background: #d9d9d9;
   border: 1px solid;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.compact-row{
+  margin-top:0;
+  margin-bottom:0;
 }
 
 #curl_cmd{
