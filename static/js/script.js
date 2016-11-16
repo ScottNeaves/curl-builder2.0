@@ -1,12 +1,12 @@
-var editor = ace.edit("editor")
-editor.setTheme("ace/theme/chrome")
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/chrome");
 editor.getSession().setMode("ace/mode/javascript");
-editor.setOption("showPrintMargin", false)
-editor.$blockScrolling = Infinity
+editor.setOption("showPrintMargin", false);
+editor.$blockScrolling = Infinity;
 
 function autoSelectURLContents(obj) {
     if (obj.value == "www.example.com") {
-        obj.setSelectionRange(0, obj.value.length)
+        obj.setSelectionRange(0, obj.value.length);
     }
 }
 
@@ -17,7 +17,7 @@ var headerSuggestions = {
     "Accept_Language": ['en-US']
 };
 
-var methodTypes = ['GET', 'PUT', 'POST', 'DELETE']
+var methodTypes = ['GET', 'PUT', 'POST', 'DELETE'];
 
 var editorModes = [{
     value: 'text',
@@ -28,14 +28,16 @@ var editorModes = [{
 }, {
     value: 'xml',
     name: 'XML'
-}]
+}];
 
 function ViewModel() {
     var self = this;
-    self.uid = ko.observable({
-      "uid": ko.observable(null),
-      "valid": ko.observable(false)
+
+    self.uid = ko.observable("");
+    self.url_has_uid = ko.computed(function(){
+      return self.uid() !== "";
     });
+
     self.headers = ko.observableArray([{
         key: ko.observable(""),
         value: ko.observable("")
@@ -53,22 +55,22 @@ function ViewModel() {
                 self.authentication().auth_necessary(bool);
                 self.authentication().username("");
                 self.authentication().password("");
-            }
+            };
         },
         "username": ko.observable(""),
         "password": ko.observable("")
-    })
-
-    self.editorMode = ko.observable("json")
-    self.editorMode.subscribe(function() {
-        editor.getSession().setMode("ace/mode/" + self.editorMode())
     });
-    self.editorContent = ko.observable("")
 
-    self.methodType = ko.observable("")
-    self.url = ko.observable("www.example.com")
+    self.editorMode = ko.observable("json");
+    self.editorMode.subscribe(function() {
+        editor.getSession().setMode("ace/mode/" + self.editorMode());
+    });
+    self.editorContent = ko.observable("");
 
-    self.dataPayload = ko.observable("")
+    self.methodType = ko.observable("");
+    self.url = ko.observable("www.example.com");
+
+    self.dataPayload = ko.observable("");
 
 
     self.saveCurl = function() {
@@ -79,58 +81,58 @@ function ViewModel() {
             dataType: 'json',
             url: '/save_curl',
             success: function(response) {
-                if (!self.url_has_uid()) {
-                    window.history.pushState("", "", "/" + response.uid);
+                if (!self.uid()) {
+                    window.history.pushState("", "", "/curl/" + response.uid);
+                    self.uid(response.uid);
                 }
-                self.uid()['uid'](response.uid);
-                self.uid()['valid'](true);
+                toastr.success('Saved! See unique shareable URL above.');
             },
             error: function() {
-                console.log("error occurred")
+                toastr.error('Something went wrong, please try again.');
             }
-        })
-    }
+        });
+    };
 
     self.curlCommand = ko.computed(function() {
-        headers = ""
+        headers = "";
         for (var i = 0; i < self.headers().length; i++) {
-            if (self.headers()[i].key() != '' || self.headers()[i].value() != '') {
+            if (self.headers()[i].key() !== '' || self.headers()[i].value() !== '') {
                 headers += " --header \"" + self.headers()[i].key() + ": " + self.headers()[i].value() + "\"";
             }
         }
 
         var data = '';
-        if (self.editorContent() != '') {
+        if (self.editorContent() !== '') {
             data = '--data \'' + self.editorContent() + '\'';
         }
 
         var auth = '';
-        if (self.authentication().username() != "" || self.authentication().password() != "") {
+        if (self.authentication().username() !=- "" || self.authentication().password() !== "") {
             auth = ' --user \'' + self.authentication().username() + ":" + self.authentication().password() + "\'";
         }
 
         queryparameters = '';
-        if (self.queryParams().length > 0 && self.queryParams()[0].key() != '') {
+        if (self.queryParams().length > 0 && self.queryParams()[0].key() !== '') {
             queryparameters = "?";
         }
-        for (var i = 0; i < self.queryParams().length; i++) {
-            if (self.queryParams()[i].key() != '' || self.queryParams()[i].value() != '') {
-                queryparameters += self.queryParams()[i].key() + "=" + self.queryParams()[i].value();
-                if (i < self.queryParams().length - 1) {
+        for (var j = 0; j < self.queryParams().length; j++) {
+            if (self.queryParams()[j].key() !== '' || self.queryParams()[j].value() !== '') {
+                queryparameters += self.queryParams()[j].key() + "=" + self.queryParams()[j].value();
+                if (j < self.queryParams().length - 1) {
                     queryparameters += "&";
                 }
             }
         }
 
-        var url = ''
-        if (self.url() != '') {
+        var url = '';
+        if (self.url() !== '') {
             url = "\"" + self.url() + queryparameters + "\"";
         }
 
         var method = " --request \"" + self.methodType() + "\" ";
 
-        return "curl --verbose " + headers + data + auth + method + url
-    })
+        return "curl --verbose " + headers + data + auth + method + url;
+    });
 
     self.headers.getSuggestedValues = function(pair) {
         return ko.computed(function() {
@@ -138,30 +140,29 @@ function ViewModel() {
         });
     };
 
-    // Callbacks
     self.headers.addHeader = function() {
         self.headers.push({
             key: ko.observable(''),
             value: ko.observable('')
         });
-    }
+    };
     self.headers.removeHeader = function() {
-        self.headers.remove(this)
-    }
+        self.headers.remove(this);
+    };
 
     self.queryParams.addQueryParam = function() {
         self.queryParams.push({
             key: ko.observable(''),
             value: ko.observable('')
         });
-    }
+    };
 
     self.queryParams.removeQueryParam = function() {
-        self.queryParams.remove(this)
-    }
+        self.queryParams.remove(this);
+    };
 
     editor.getSession().on('change', function(e) {
-        self.editorContent(editor.getValue().replace(/[\n\t ]/g, ''))
+        self.editorContent(editor.getValue().replace(/[\n\t ]/g, ''));
     });
 
     self.formatText = function() {
@@ -171,25 +172,25 @@ function ViewModel() {
         if (self.editorMode() == 'xml') {
             editor.setValue(vkbeautify.xml(editor.getValue()));
         }
-    }
+    };
 
     self.serializeCurlAsJson = function() {
-        var hdrs = []
+        var hdrs = [];
         for (var i = 0; i < self.headers().length; i++) {
             hdrs.push({
                 key: self.headers()[i].key(),
                 value: self.headers()[i].value()
-            })
+            });
         }
-        var qpms = []
-        for (var i = 0; i < self.queryParams().length; i++) {
+        var qpms = [];
+        for (var k = 0; k < self.queryParams().length; k++) {
             qpms.push({
-                key: self.queryParams()[i].key(),
-                value: self.queryParams()[i].value()
-            })
+                key: self.queryParams()[k].key(),
+                value: self.queryParams()[k].value()
+            });
         }
         return {
-            uid: self.uid()['uid'](),
+            uid: self.uid(),
             headers: hdrs,
             queryParameters: qpms,
             username: self.authentication().username(),
@@ -198,56 +199,48 @@ function ViewModel() {
             editorMode: self.editorMode(),
             methodType: self.methodType(),
             url: self.url()
-        }
-    }
+        };
+    };
 
     self.deserializeJson = function(curl) {
-        self.url(curl.url)
-        self.editorMode(curl.editorMode)
-        self.methodType(curl.methodType)
-        self.authentication().username(curl.username)
-        self.authentication().password(curl.password)
-        editor.setValue(curl.dataPayload)
+        self.uid(curl.uid);
+        self.url(curl.url);
+        self.editorMode(curl.editorMode);
+        self.methodType(curl.methodType);
+        self.authentication().username(curl.username);
+        self.authentication().password(curl.password);
+        editor.setValue(curl.dataPayload);
 
-        self.headers().pop()
+        self.headers().pop();
         for (var i = 0; i < curl.headers.length; i++) {
             self.headers.push({
                 key: ko.observable(curl.headers[i].key),
                 value: ko.observable(curl.headers[i].value)
-            })
+            });
         }
 
-        self.queryParams().pop()
-        for (var i = 0; i < curl.queryParameters.length; i++) {
+        self.queryParams().pop();
+        for (var n = 0; n < curl.queryParameters.length; n++) {
             self.queryParams.push({
-                key: ko.observable(curl.queryParameters[i].key),
-                value: ko.observable(curl.queryParameters[i].value)
-            })
+                key: ko.observable(curl.queryParameters[n].key),
+                value: ko.observable(curl.queryParameters[n].value)
+            });
         }
-    }
+    };
 
     self.get_uid = function() {
-        url = document.URL
-        uid = url.substr(url.length - 16)
+        url = document.URL;
+        uid = url.substr(url.length - 16);
         return /[a-zA-Z0-9]{16}$/.test(uid) ? uid : null;
-    }
-
-    self.url_has_uid = ko.computed(function() {
-        var uid_not_null = self.uid()['uid']() != null;
-        var uid_is_valid = self.uid()['valid']() == true
-        return uid_not_null && uid_is_valid;
-    })
+    };
 
     function checkForData() {
         if (self.get_uid()) {
-            $.post('/retrieve_curl/' + self.get_uid(), function(data) {
-                var data = JSON.parse(data);
-                if (data['error']){
-                  debugger;
-                }else{
-                  self.uid()['uid'](self.get_uid());
-                  self.uid()['valid'](true);
-                  self.deserializeJson(data);
+            $.get('/retrieve_curl/' + self.get_uid(), function(data) {
+                if (data.error) {
+                  console.log(data);
+                } else {
+                    self.deserializeJson(data);
                 }
             });
         }
@@ -269,8 +262,7 @@ function ViewModel() {
         });
     }
     initialize();
-
-};
+}
 
 
 ko.applyBindings(new ViewModel());
