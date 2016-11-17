@@ -29,10 +29,11 @@
 }
 
 .curl_cmd_well {
-  background: #d9d9d9;
+  background: black;
   border: 1px solid;
   padding-top:5px;
   padding-bottom:5px;
+  border-radius:10px;
 }
 
 .compact-row{
