@@ -261,9 +261,17 @@ function ViewModel() {
         });
     }
 
+    function setUniversalAttributes(){
+      $.merge($('input'), $('textarea')).each(function(){
+        $(this).attr('autocapitalize', 'none')
+        $(this).attr('autocorrect', 'off')
+      })
+    }
+
     function initialize() {
         $(document).ready(function() {
             checkForData();
+            setUniversalAttributes();
             setupClipboardButton();
         });
     }
