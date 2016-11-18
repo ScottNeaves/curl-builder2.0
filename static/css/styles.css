@@ -1,10 +1,3 @@
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
-    //Do this because by default, mobile Safari (and mobile Chrome) auto-zoom on inputs which don't have a "sufficient font size."
-    //16 is currently considered a sufficient font size and as such those browsers will no longer auto-zoom when inputs have that font size.
-    //Full details: http://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone
-    font-size: 16px;
-}
-
 #editor {
     min-height: 200px;
 }
