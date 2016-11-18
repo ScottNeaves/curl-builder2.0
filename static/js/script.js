@@ -251,7 +251,13 @@ function ViewModel() {
         copyButton.addEventListener('click', function(event) {
             var curl_cmd = document.querySelector('#curl_cmd');
             curl_cmd.select();
-            document.execCommand('copy');
+            try {
+              document.execCommand('copy');
+              toastr.success('Curl command saved to clipboard!');
+            }
+            catch(err) {
+              console.log("Copying to clipboard unsuccessful. Error: " + err.message)
+            }
         });
     }
 
