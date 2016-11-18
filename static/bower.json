@@ -19,9 +19,7 @@
   "dependencies": {
     "knockout": "^3.4.0",
     "bootstrap": "^3.3.6",
-    "juicy-ace-editor": "^1.1.1",
     "vkBeautify": "vkbeautify#*",
-    "ace-builds": "^1.2.3",
     "jquery": "^2.2.3",
     "toastr": "^2.1.3"
   }
