@@ -230,9 +230,10 @@ function ViewModel() {
 
     self.copyCurl = function() {
         var curl_cmd = document.querySelector('#curl_cmd');
-        curl_cmd.select();
         try {
+            curl_cmd.select();
             document.execCommand('copy');
+            curl_cmd.blur();
             toastr.success('Curl command saved to clipboard!');
         } catch (err) {
             console.log("Copying to clipboard unsuccessful. Error: " + err.message)
