@@ -231,10 +231,13 @@ function ViewModel() {
     self.copyCurl = function() {
         var curl_cmd = document.querySelector('#curl_cmd');
         try {
-            curl_cmd.select();
-            document.execCommand('copy');
-            curl_cmd.blur();
-            toastr.success('Curl command saved to clipboard!');
+            if (!self.iOS()){
+              //Copying to clipboard from javascript does not work on iOS: http://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios
+              curl_cmd.select();
+              document.execCommand('copy');
+              curl_cmd.blur();
+              toastr.success('Curl command saved to clipboard!');
+            }
         } catch (err) {
             console.log("Copying to clipboard unsuccessful. Error: " + err.message)
         }
@@ -271,7 +274,7 @@ function ViewModel() {
       //cause the window to be scrolled all the way back up to the top after the user
       //clicks on the ace editor. This code scrolls it back down, making for a slightly
       //confusing flicker, but this is the best I've got right now.
-        if (iOS()) {
+        if (self.iOS()) {
             $('.ace_editor').bind('focusin focus', function(e) {
                 var editor = document.getElementById('editor-row');
                 var position = getOffsetRect(editor);
@@ -280,7 +283,7 @@ function ViewModel() {
         }
     }
 
-    function iOS() {
+    self.iOS = function() {
         var iDevices = [
             'iPad Simulator',
             'iPhone Simulator',
