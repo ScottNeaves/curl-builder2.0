@@ -162,7 +162,7 @@ function ViewModel() {
     };
 
     editor.getSession().on('change', function(e) {
-        self.editorContent(editor.getValue().replace(/[\n\t ]/g, ''));
+        self.editorContent(editor.getValue().replace(/[\n\t]/g, ''));
     });
 
     self.formatText = function() {
