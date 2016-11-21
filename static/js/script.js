@@ -34,8 +34,8 @@ function ViewModel() {
     var self = this;
 
     self.uid = ko.observable("");
-    self.url_has_uid = ko.computed(function(){
-      return self.uid() !== "";
+    self.url_has_uid = ko.computed(function() {
+        return self.uid() !== "";
     });
 
     self.headers = ko.observableArray([{
@@ -107,7 +107,7 @@ function ViewModel() {
         }
 
         var auth = '';
-        if (self.authentication().username() !=- "" || self.authentication().password() !== "") {
+        if (self.authentication().username() !== "" || self.authentication().password() !== "") {
             auth = ' --user \'' + self.authentication().username() + ":" + self.authentication().password() + "\'";
         }
 
@@ -228,6 +228,17 @@ function ViewModel() {
         }
     };
 
+    self.copyCurl = function() {
+        var curl_cmd = document.querySelector('#curl_cmd');
+        curl_cmd.select();
+        try {
+            document.execCommand('copy');
+            toastr.success('Curl command saved to clipboard!');
+        } catch (err) {
+            console.log("Copying to clipboard unsuccessful. Error: " + err.message)
+        }
+    }
+
     self.get_uid = function() {
         url = document.URL;
         uid = url.substr(url.length - 16);
@@ -238,7 +249,7 @@ function ViewModel() {
         if (self.get_uid()) {
             $.get('/retrieve_curl/' + self.get_uid(), function(data) {
                 if (data.error) {
-                  console.log(data);
+                    console.log(data);
                 } else {
                     self.deserializeJson(data);
                 }
@@ -246,33 +257,72 @@ function ViewModel() {
         }
     }
 
-    function setupClipboardButton() {
-        var copyButton = document.querySelector('.copy-button');
-        copyButton.addEventListener('click', function(event) {
-            var curl_cmd = document.querySelector('#curl_cmd');
-            curl_cmd.select();
-            try {
-              document.execCommand('copy');
-              toastr.success('Curl command saved to clipboard!');
-            }
-            catch(err) {
-              console.log("Copying to clipboard unsuccessful. Error: " + err.message)
-            }
-        });
+    function setUniversalAttributes() {
+        $.merge($('input'), $('textarea')).each(function() {
+            $(this).attr('autocapitalize', 'none');
+            $(this).attr('autocorrect', 'off');
+            $(this).attr('spellcheck', 'false')
+        })
     }
 
-    function setUniversalAttributes(){
-      $.merge($('input'), $('textarea')).each(function(){
-        $(this).attr('autocapitalize', 'none')
-        $(this).attr('autocorrect', 'off')
-      })
+    function fix_iOS_AutoScrollProblem() {
+      //All this craziness is necessary because iOS chrome and iOS Safari both mysteriously
+      //cause the window to be scrolled all the way back up to the top after the user
+      //clicks on the ace editor. This code scrolls it back down, making for a slightly
+      //confusing flicker, but this is the best I've got right now.
+        if (iOS()) {
+            $('.ace_editor').bind('focusin focus', function(e) {
+                var editor = document.getElementById('editor-row');
+                var position = getOffsetRect(editor);
+                window.scrollTo(0, position.top);
+            })
+        }
     }
+
+    function iOS() {
+        var iDevices = [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+        ];
+
+        if (!!navigator.platform) {
+            while (iDevices.length) {
+                if (navigator.platform === iDevices.pop()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    function getOffsetRect(elem) {
+        //Taken from this excellent tutorial on javascript coordinates: http://javascript.info/tutorial/coordinates
+        var box = elem.getBoundingClientRect()
+        var body = document.body
+        var docElem = document.documentElement
+        var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop
+        var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft
+        var clientTop = docElem.clientTop || body.clientTop || 0
+        var clientLeft = docElem.clientLeft || body.clientLeft || 0
+        var top = box.top + scrollTop - clientTop
+        var left = box.left + scrollLeft - clientLeft
+        return {
+            top: Math.round(top),
+            left: Math.round(left)
+        }
+    }
+
 
     function initialize() {
         $(document).ready(function() {
             checkForData();
             setUniversalAttributes();
-            setupClipboardButton();
+            fix_iOS_AutoScrollProblem();
         });
     }
     initialize();
