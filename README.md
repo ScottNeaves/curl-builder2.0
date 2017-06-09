@@ -5,7 +5,7 @@ Builds curl commands in the browser!
 * Backend: python3, Flask, MongoDB
 * Frontend: knockoutJS, bootstrap
 
-###Install and run:
+### Install and run:
 * Clone the project from GitHub to your local machine.
 * In project directory: `pyvenv .env`, `. .env/bin/activate`, `pip install -r requirements.txt`
 * Navigate to `/static`, run `bower install`, `npm install`
