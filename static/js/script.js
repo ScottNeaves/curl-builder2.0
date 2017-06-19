@@ -103,7 +103,7 @@ function ViewModel() {
 
         var data = '';
         if (self.editorContent() !== '') {
-            data = '--data \'' + self.editorContent() + '\'';
+            data = ' --data \'' + self.editorContent() + '\'';
         }
 
         var auth = '';
